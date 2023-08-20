@@ -1,0 +1,63 @@
+version: '3.8'
+
+volumes:
+  local_postgres_data: { }
+  local_postgres_data_backups: { }
+
+services:
+  web: &web
+    build:
+      context: .
+    image: web_local
+    depends_on:
+      - postgres
+      - rmq
+      - redis
+    volumes:
+      - .:/app
+    env_file:
+      - ./.envs/.local/.services
+      - ./.envs/.local/.postgres
+    environment:
+      PORT: 9001
+    ports:
+      - "9001:9001"
+    restart: unless-stopped
+    command: /start
+    networks:
+      - default
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/local/postgres/Dockerfile
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.envs/.local/.postgres
+
+  redis:
+    image: redis:6.0-alpine
+
+  celeryworker:
+     <<: *web
+     image: celeryworker_local
+     depends_on:
+       - redis
+       - postgres
+       - web
+       - celerybeat
+       - rmq
+     command: /start-worker
+     ports: [ ]
+
+  celerybeat:
+     <<: *web
+     image: celerybeat_local
+     depends_on:
+       - web
+       - postgres
+       - redis
+       - rmq
+     command: /start-beat
+     ports: [ ]

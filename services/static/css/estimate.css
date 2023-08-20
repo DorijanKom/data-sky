@@ -1,0 +1,19 @@
+div{
+    background-color: #0d5aa7;
+}
+
+.title-div{
+    display: flex;
+    flex-direction: row;
+    background-color: #2b542c;
+}
+
+.title1{
+    float:left;
+    background-color: #2b542c;
+}
+
+.title2{
+    float: right;
+    background-color: #0d5aa7;
+}

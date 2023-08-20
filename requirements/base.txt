@@ -1,0 +1,48 @@
+# Django
+django==4.0.3
+django-environ
+django-model-utils
+django-compressor
+django-redis
+djangorestframework
+coreapi
+django-watchman
+django-rest-swagger
+django-celery-beat
+django-cors-headers
+django-filter
+django-extensions
+django-coverage-plugin
+pytest-django
+drf-yasg
+django-debug-toolbar
+
+# Celery
+celery
+
+# Other
+requests
+boto3
+botocore
+cairocffi
+WeasyPrint
+git+https://github.com/encode/httpx.git@1.0.0.beta0
+gunicorn
+whitenoise
+ipdb
+Sphinx
+django-parler
+pytz
+python-slugify
+argon2-cffi
+celery
+psycopg2
+Cython
+gevent
+segno
+xhtml2pdf
+
+# Testing
+pytest
+pytest-sugar
+

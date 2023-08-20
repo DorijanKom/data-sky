@@ -1,0 +1,36 @@
+#!/bin/sh
+set -o errexit
+set -o nounset
+
+case "${SERVICE_TYPE}" in
+  "api")
+    python manage.py migrate django_celery_beat
+    python manage.py migrate
+    python /app/manage.py collectstatic --noinput
+    gunicorn config.wsgi:application -t 400 -b 0.0.0.0:${PORT} -w 2
+  ;;
+  "celerybeat")
+    rm -f './celerybeat.pid'
+    celery -A services.asyncq beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+  ;;
+  "celeryworker")
+    celery -A services.asyncq worker -l INFO --concurrency=5 -n worker_default@%h \
+    & celery -A services.asyncq worker -l INFO --concurrency=1 -Q fifo -n worker_fifo@%h
+  ;;
+  "migrate")
+    python manage.py migrate
+  ;;
+  "api-local")
+    python manage.py migrate django_celery_beat
+    python manage.py migrate
+    python /app/manage.py collectstatic --noinput
+    gunicorn config.wsgi:application -t 400 -b 0.0.0.0:${PORT} --reload -w 2
+  ;;
+  "api-local-debug")
+    echo "Running in debug mode"
+    exec "$@"
+  ;;
+  "*")
+    echo "Unknown service type '${SERVICE_TYPE}'" >&2
+    exit 1
+esac
