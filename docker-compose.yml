@@ -8,10 +8,9 @@ services:
   web: &web
     build:
       context: .
-    image: web_local
+      dockerfile: ./compose/local/services/Dockerfile
     depends_on:
       - postgres
-      - rmq
       - redis
     volumes:
       - .:/app
@@ -47,7 +46,6 @@ services:
        - postgres
        - web
        - celerybeat
-       - rmq
      command: /start-worker
      ports: [ ]
 
@@ -58,6 +56,5 @@ services:
        - web
        - postgres
        - redis
-       - rmq
      command: /start-beat
      ports: [ ]

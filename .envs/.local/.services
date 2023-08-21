@@ -16,6 +16,4 @@ DJANGO_SETTINGS_MODULE=config.settings.local
 
 SITE_HOST=localhost:8000
 
-CELERY_BROKER_URL=amqp://rmq_username:rmq_password@rmq:5672/rmq_vhost
-
 MAIL_SERVICE_CLASS=services.core.utils.mailing_service.SmtpService

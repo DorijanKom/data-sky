@@ -1,5 +1,5 @@
 # Django
-django==4.0.3
+django==4.2.0
 django-environ
 django-model-utils
 django-compressor
@@ -26,7 +26,6 @@ boto3
 botocore
 cairocffi
 WeasyPrint
-git+https://github.com/encode/httpx.git@1.0.0.beta0
 gunicorn
 whitenoise
 ipdb
