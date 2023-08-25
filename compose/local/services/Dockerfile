@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 ENV PYTHONUNBUFFERED 1
 
@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && apt-get install -y git postgresql zlib1g-dev libfreetype6-dev build-essential gettext libgettextpo-dev libpq-dev libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libffi-dev wget
 
 COPY ./requirements /requirements
-RUN pip install -r /requirements/staging.txt
+RUN pip install -r /requirements/local.txt
 
 COPY ./compose/local/services/entrypoint /entrypoint
 RUN sed -i 's/\r//' /entrypoint

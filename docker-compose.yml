@@ -12,6 +12,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - rmq
     volumes:
       - .:/app
     env_file:
@@ -58,3 +59,12 @@ services:
        - redis
      command: /start-beat
      ports: [ ]
+
+  rmq:
+    image: rabbitmq:3.7-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "15671:15671"
+    env_file:
+      - ./.envs/.local/.rmq
