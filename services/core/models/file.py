@@ -1,12 +1,12 @@
 from django.db import models
 from django.utils import timezone
 
-from services.core.models import User
+from services.core.models import User, Directory
 
 
-class Data(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    file_id = models.AutoField(primary_key=True)
+class File(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    directory = models.ForeignKey(Directory, on_delete=models.CASCADE)
     file = models.FileField(null=True, max_length=255)
     date_created = models.DateTimeField(default=timezone.now)
 
