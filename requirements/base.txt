@@ -16,6 +16,7 @@ django-coverage-plugin
 pytest-django
 drf-yasg
 django-debug-toolbar
+django-storages
 
 # Celery
 celery

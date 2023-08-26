@@ -18,6 +18,7 @@ services:
     env_file:
       - ./.envs/.local/.services
       - ./.envs/.local/.postgres
+      - ./.envs/.local/.s3
     environment:
       PORT: 9001
     ports:
@@ -26,6 +27,7 @@ services:
     command: /start
     networks:
       - default
+      - localstack_service_network
 
   postgres:
     build:
@@ -68,3 +70,7 @@ services:
       - "15671:15671"
     env_file:
       - ./.envs/.local/.rmq
+
+networks:
+  localstack_service_network:
+    external: true
