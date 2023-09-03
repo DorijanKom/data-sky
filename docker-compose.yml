@@ -19,6 +19,7 @@ services:
       - ./.envs/.local/.services
       - ./.envs/.local/.postgres
       - ./.envs/.local/.s3
+      - ./.envs/.local/.rmq
     environment:
       PORT: 9001
     ports:

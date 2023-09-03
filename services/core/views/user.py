@@ -5,6 +5,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 from services.core.constants.error import WRONG_CREDENTIALS, TOKEN_MISSING
+from services.core.models import Directory
 from services.core.models.user import User
 from services.core.serializers.user import UserAuthenticationSerializer, UserSerializer
 from services.core.utils.error_handler import error_response_from_code
@@ -23,6 +24,10 @@ class RegisterUserView(GenericAPIView):
         user = User.objects.create_user(email=serializer.validated_data.get('email'),
                                         password=serializer.validated_data.get('password'),
                                         is_active=True)
+        Directory.objects.create(
+            name='/',
+            user=user
+        )
 
         return Response(status=status.HTTP_200_OK)
 

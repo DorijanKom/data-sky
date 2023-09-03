@@ -1,29 +1,31 @@
 from rest_framework import serializers
 
-from services.core.models import Directory
+from services.core.constants.error import DIRECTORY_ALREADY_EXISTS
+from services.core.models.directory import Directory
+from services.core.utils.wrapper_exception import WrapperException
 
 
 class DirectorySerializer(serializers.Serializer):
-    size = serializers.SerializerMethodField()
-    name = serializers.SerializerMethodField()
+    name = serializers.CharField(max_length=255)
     since_added = serializers.SerializerMethodField()
+    parent_directory = serializers.PrimaryKeyRelatedField(
+        queryset=Directory.objects.all(), write_only=True, required=False
+    )
 
     class Meta:
         model = Directory
-        fields = "__all__"
-
-    def get_size(self, obj):
-        directory_size = ''
-        if obj.directory and hasattr(obj.directory, 'size'):
-            directory_size = obj.directory.size
-        return directory_size
-
-    def get_name(self, obj):
-        directory_name = ''
-        if obj.directory and hasattr(obj.directory, 'name'):
-            directory_name = obj.directory.name
-        return directory_name
+        fields = ['name']
 
     def get_since_added(self, obj):
-        date_added = obj.directory.date_created
+        date_added = obj.date_created
         return date_added
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        directory = Directory.objects.filter(name=validated_data.get('name'), user_id=user.id,
+                                             parent_directory=validated_data.get('parent_directory'))
+        if len(directory) > 0:
+            raise WrapperException(DIRECTORY_ALREADY_EXISTS)
+        else:
+            return Directory.objects.create(**validated_data)

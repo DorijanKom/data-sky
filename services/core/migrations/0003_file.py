@@ -17,8 +17,10 @@ class Migration(migrations.Migration):
             name='File',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(max_length=255, null=True, upload_to='')),
+                ('name', models.CharField(max_length=255)),
+                ('file', models.FileField(upload_to='')),
                 ('date_created', models.DateTimeField(default=django.utils.timezone.now)),
+                ('size', models.CharField()),
                 ('user_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),

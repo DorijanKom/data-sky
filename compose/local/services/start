@@ -2,7 +2,6 @@
 set -o errexit
 set -o nounset
 
-python manage.py migrate django_celery_beat
 python manage.py migrate
 python /app/manage.py collectstatic --noinput
 gunicorn config.wsgi:application -t 400 -b 0.0.0.0:${PORT} -w 2

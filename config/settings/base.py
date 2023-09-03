@@ -270,6 +270,7 @@ LOCAL_APPS = [
 
 INSTALLED_APPS += LOCAL_APPS
 AUTH_USER_MODEL = "core.User"
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 CELERY_IMPORTS = ("services.asyncq.core_tasks",)
 
 MIGRATION_MODULES = {
