@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('file', models.FileField(upload_to='')),
                 ('date_created', models.DateTimeField(default=django.utils.timezone.now)),
                 ('size', models.CharField()),
-                ('user_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

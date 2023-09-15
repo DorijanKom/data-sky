@@ -4,4 +4,4 @@ set -o nounset
 
 python manage.py migrate
 python /app/manage.py collectstatic --noinput
-gunicorn config.wsgi:application -t 400 -b 0.0.0.0:${PORT} -w 2
+gunicorn config.wsgi:application -t 400 -b 0.0.0.0:${PORT} -w 2 --reload

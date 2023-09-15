@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
-from services.core.models import User, Directory
+from services.core.models import Directory
 
 
 class File(models.Model):

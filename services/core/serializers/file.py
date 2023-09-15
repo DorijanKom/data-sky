@@ -1,14 +1,14 @@
 from rest_framework import serializers
 
-from services.core.models import File
+from services.core.models import File, Directory
 
 
-class FileSerializer(serializers.Serializer):
-    size = serializers.CharField()
-    name = serializers.CharField(max_length=255)
+class FileSerializer(serializers.ModelSerializer):
+    # size = serializers.CharField()
+    # name = serializers.CharField(max_length=255)
     # file_type = serializers.SerializerMethodField()
-    since_added = serializers.SerializerMethodField()
-    file = serializers.FileField()
+    # since_added = serializers.SerializerMethodField()
+    # file = serializers.FileField()
 
     class Meta:
         model = File
@@ -24,16 +24,14 @@ class FileSerializer(serializers.Serializer):
         return date_added
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['user'] = user
-
         return File.objects.create(**validated_data)
 
 
 class CreateFileSerializer(serializers.Serializer):
-    class Meta:
-        model = File
-        fields = '__all__'
+    directory = serializers.PrimaryKeyRelatedField(
+        queryset=Directory.objects.all(), write_only=True, required=False
+    )
+    file = serializers.FileField()
 
     def create(self, validated_data):
         user = self.context['request'].user

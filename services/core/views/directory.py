@@ -19,9 +19,9 @@ class DirectoryView(GenericAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, id):
+    def delete(self, pk):
         try:
-            Directory.objects.filter(id=id).delete()
+            Directory.objects.filter(id=pk).delete()
             return Response({"Success": "Directory deleted"}, status=status.HTTP_200_OK)
         except Directory.DoesNotExist:
             return Response({"Error": Directory.DoesNotExist}, status=status.HTTP_400_BAD_REQUEST)
@@ -35,6 +35,7 @@ class ListDirectoryContentsView(GenericAPIView):
         contents = []
 
         subdirectories = Directory.objects.filter(parent_directory=directory)
+        print(subdirectories)
         for subdirectory in subdirectories:
             contents.append({
                 'type': 'directory',
@@ -43,23 +44,28 @@ class ListDirectoryContentsView(GenericAPIView):
                 'contents': self.get_directory_contents(subdirectory)
             })
 
-        files = File.objects.filter(directory=directory)
+        files = File.objects.filter(directory_id=directory.id)
+        print(files)
         for file in files:
+            print(file.__dict__)
             contents.append({
                 'type': 'file',
-                'name': file.file.name,
+                'name': file.name,
                 'id': file.id,
-                'user_id': file.user_id.id,
+                'user_id': file.user_id,
                 'date_created': file.date_created
             })
-
         return contents
 
-    def get(self, request, directory_id):
-        # Retrieve the starting directory
-        directory = get_object_or_404(Directory, id=directory_id)
+    def get(self, request, pk):
+
+        user = request.user
+
+        directory = get_object_or_404(Directory, id=pk, user=user)
 
         # Get the contents of the directory
         contents = self.get_directory_contents(directory)
+
+        print(contents)
 
         return Response(data=contents, status=status.HTTP_200_OK)
