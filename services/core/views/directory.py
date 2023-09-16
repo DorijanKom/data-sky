@@ -81,11 +81,13 @@ class ListDirectoryContentsView(GenericAPIView):
             })
         return contents
 
-    def get(self, request, pk):
+    def get(self, request, pk=None):
 
         user = request.user
-
-        directory = get_object_or_404(Directory, id=pk, user=user)
+        if pk is None:
+            directory = get_object_or_404(Directory, name="/", user=user, parent_directory=None)
+        else:
+            directory = get_object_or_404(Directory, id=pk, user=user)
 
         # Get the contents of the directory
         contents = self.get_directory_contents(directory)

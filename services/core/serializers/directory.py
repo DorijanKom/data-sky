@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from services.core.constants.error import DIRECTORY_ALREADY_EXISTS
+from services.core.constants.error import DIRECTORY_ALREADY_EXISTS, DIRECTORY_DOES_NOT_BELONG_TO_USER
 from services.core.models.directory import Directory
 from services.core.utils.wrapper_exception import WrapperException
 
@@ -23,6 +23,12 @@ class DirectorySerializer(serializers.Serializer):
     def create(self, validated_data):
         user = self.context['request'].user
         validated_data['user'] = user
+        parent_directory = validated_data['parent_directory']
+
+        if parent_directory:
+            if parent_directory.user != user:
+                raise WrapperException(DIRECTORY_DOES_NOT_BELONG_TO_USER)
+
         directory = Directory.objects.filter(name=validated_data.get('name'), user_id=user.id,
                                              parent_directory=validated_data.get('parent_directory'))
         if len(directory) > 0:

@@ -5,6 +5,7 @@ GLOBAL_VALIDATION_ERROR = "notValid"
 WRONG_CREDENTIALS = "wrongCredentials"
 TOKEN_MISSING = "tokenMissing"
 DIRECTORY_ALREADY_EXISTS = "directoryAlreadyExists"
+DIRECTORY_DOES_NOT_BELONG_TO_USER = "directoryDoesNotBelongToUser"
 FILE_ALREADY_EXISTS = "fileAlreadyExists"
 FILE_DOES_NOT_EXIST = 'fileDoesNotExist'
 
@@ -32,6 +33,10 @@ ERROR_OBJECTS = {
     FILE_DOES_NOT_EXIST: (
         Error(FILE_DOES_NOT_EXIST, "The given file does not exist"),
         status.HTTP_404_NOT_FOUND
+    ),
+    DIRECTORY_DOES_NOT_BELONG_TO_USER: (
+        Error(DIRECTORY_DOES_NOT_BELONG_TO_USER, "The parent directory does not belong to this user"),
+        status.HTTP_403_FORBIDDEN
     )
 }
 
