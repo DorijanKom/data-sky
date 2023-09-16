@@ -1,3 +1,5 @@
+import boto3
+from django.conf import settings
 from rest_framework import status
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.authentication import SessionAuthentication
@@ -19,12 +21,34 @@ class DirectoryView(GenericAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, pk):
+    def delete(self, request):
         try:
-            Directory.objects.filter(id=pk).delete()
-            return Response({"Success": "Directory deleted"}, status=status.HTTP_200_OK)
+            user = request.user
+            data = request.data
+
+            file_ids = data.get("file_ids", [])
+            directory_ids = data.get("directory_ids", [])
+
+            for file_id in file_ids:
+                file = get_object_or_404(File, id=file_id, user=user)
+
+                s3 = boto3.client('s3', endpoint_url=settings.AWS_S3_ENDPOINT_URL)
+                bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+                file_key = file.name
+
+                s3.delete_object(Bucket=bucket_name, Key=file_key)
+                file.delete()
+
+            for directory_id in directory_ids:
+                directory = get_object_or_404(Directory, id=directory_id, user=user)
+                if directory.parent_directory is None:
+                    continue
+                directory.delete()
+            return Response({"message": "Directory deleted"}, status=status.HTTP_200_OK)
         except Directory.DoesNotExist:
-            return Response({"Error": Directory.DoesNotExist}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": Directory.DoesNotExist})
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ListDirectoryContentsView(GenericAPIView):

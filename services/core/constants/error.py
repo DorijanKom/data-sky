@@ -6,6 +6,7 @@ WRONG_CREDENTIALS = "wrongCredentials"
 TOKEN_MISSING = "tokenMissing"
 DIRECTORY_ALREADY_EXISTS = "directoryAlreadyExists"
 FILE_ALREADY_EXISTS = "fileAlreadyExists"
+FILE_DOES_NOT_EXIST = 'fileDoesNotExist'
 
 ERROR_OBJECTS = {
     GLOBAL_VALIDATION_ERROR: (
@@ -27,6 +28,10 @@ ERROR_OBJECTS = {
     FILE_ALREADY_EXISTS: (
         Error(FILE_ALREADY_EXISTS, "File with that name already exists"),
         status.HTTP_400_BAD_REQUEST
+    ),
+    FILE_DOES_NOT_EXIST: (
+        Error(FILE_DOES_NOT_EXIST, "The given file does not exist"),
+        status.HTTP_404_NOT_FOUND
     )
 }
 

@@ -1,3 +1,5 @@
+import boto3
+from django.conf import settings
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.generics import ListAPIView, GenericAPIView, get_object_or_404
@@ -5,7 +7,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
-from services.core.constants.error import FILE_ALREADY_EXISTS
+from services.core.constants.error import FILE_ALREADY_EXISTS, FILE_DOES_NOT_EXIST
 from services.core.serializers.file import FileSerializer, CreateFileSerializer
 
 from services.core.models import File, Directory
@@ -56,4 +58,22 @@ class FileView(GenericAPIView):
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk):
+        try:
+            user = request.user
 
+            file = get_object_or_404(File, id=pk, user=user)
+
+            s3 = boto3.client('s3', endpoint_url=settings.AWS_S3_ENDPOINT_URL)
+
+            bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+            file_key = file.name
+
+            s3.delete_object(Bucket=bucket_name, Key=file_key)
+            file.delete()
+
+            return Response({'message': 'File deleted successfully'})
+        except File.DoesNotExist:
+            return Response({'error': FILE_DOES_NOT_EXIST})
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

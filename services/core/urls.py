@@ -11,7 +11,7 @@ urlpatterns = [
     re_path(r"^user/login/?$", LoginUserView.as_view(), name="login-user"),
     re_path(r"^user/logout/?$", LogoutUserView.as_view(), name="logout-user"),
     re_path(r"^list-files/?$", ListFileView.as_view(), name="list-files"),
-    re_path(r"^file/?$", FileView.as_view(), name="file"),
+    re_path(r"^file/(?P<pk>\d+)?$", FileView.as_view(), name="file"),
     re_path(r"^directory/(?P<pk>\d+)?$", DirectoryView.as_view(), name="directory"),
     re_path(r"^list-contents/(?P<pk>\d+)?$", ListDirectoryContentsView.as_view(), name="list-contents")
 ]
