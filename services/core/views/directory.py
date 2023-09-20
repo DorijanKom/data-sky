@@ -65,6 +65,7 @@ class ListDirectoryContentsView(GenericAPIView):
                 'type': 'directory',
                 'name': subdirectory.name,
                 'id': subdirectory.id,
+                'added': subdirectory.date_created,
                 'contents': self.get_directory_contents(subdirectory)
             })
 
@@ -77,14 +78,16 @@ class ListDirectoryContentsView(GenericAPIView):
                 'name': file.name,
                 'id': file.id,
                 'user_id': file.user_id,
-                'date_created': file.date_created
+                'date_created': file.date_created,
+                'size': file.size
             })
         return contents
 
     def get(self, request, pk=None):
 
         user = request.user
-        if pk is None:
+        if pk is None or '':
+            print(user)
             directory = get_object_or_404(Directory, name="/", user=user, parent_directory=None)
         else:
             directory = get_object_or_404(Directory, id=pk, user=user)

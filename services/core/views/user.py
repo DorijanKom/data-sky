@@ -63,6 +63,7 @@ class LoginUserView(GenericAPIView):
 class LogoutUserView(GenericAPIView):
     authentication_classes = [SessionAuthentication]
 
+
     def post(self, request):
         logout(request)
         return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
