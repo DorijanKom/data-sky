@@ -25,16 +25,3 @@ class FileSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return File.objects.create(**validated_data)
-
-
-class CreateFileSerializer(serializers.Serializer):
-    directory = serializers.PrimaryKeyRelatedField(
-        queryset=Directory.objects.all(), write_only=True, required=False
-    )
-    file = serializers.FileField()
-
-    def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['user'] = user
-
-        return File.objects.create(**validated_data)

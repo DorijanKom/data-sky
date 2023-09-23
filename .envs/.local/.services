@@ -9,12 +9,12 @@ REDIS_PORT=6379
 HEALTH_TOKENS=62acff8cb32d45d783e95b2ef565f7db,834e58539a364301bc6d82c4f35886fe
 
 DJANGO_SECRET_KEY=kzFpSX8TVMUeOk3eiq0CuuwUlMMPNUygPenq3braLQJhYc5ER8vx6cRn15kHNEph
-DJANGO_CORS_ORIGIN_WHITELIST=http://localhost:8000
+DJANGO_CORS_ORIGIN_WHITELIST=http://localhost:5173
 DJANGO_CORS_ORIGIN_REGEX=http[s]?://[\w\.]*(?<!\.)\.?localhost(?:[:]\d{1,5})?$
 
 DJANGO_SETTINGS_MODULE=config.settings.local
 
-SITE_HOST=localhost:8000
+SITE_HOST=http://localhost:5173
 
 CELERY_BROKER_URL=amqp://rmq_username:rmq_password@rmq:5672/rmq_vhost
 

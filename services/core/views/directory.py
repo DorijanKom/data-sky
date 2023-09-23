@@ -1,13 +1,14 @@
 import boto3
 from django.conf import settings
 from rest_framework import status
-from rest_framework.generics import GenericAPIView, get_object_or_404
+from rest_framework.generics import GenericAPIView, get_object_or_404, ListAPIView
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from services.core.models import File
 from services.core.models.directory import Directory
-from services.core.serializers.directory import DirectorySerializer
+from services.core.serializers.directory import DirectorySerializer, DirectoryContentSerializer
 
 
 class DirectoryView(GenericAPIView):
@@ -51,41 +52,47 @@ class DirectoryView(GenericAPIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class ListDirectoryContentsView(GenericAPIView):
+class ListDirectoryContentsView(ListAPIView):
     authentication_classes = [SessionAuthentication]
+    serializer_class = DirectoryContentSerializer
 
     def get_directory_contents(self, directory):
         # Recursively retrieve the contents of a directory
         contents = []
 
         subdirectories = Directory.objects.filter(parent_directory=directory)
-        print(subdirectories)
         for subdirectory in subdirectories:
-            contents.append({
+            serializer_data = {
                 'type': 'directory',
                 'name': subdirectory.name,
                 'id': subdirectory.id,
-                'added': subdirectory.date_created,
+                'date_created': subdirectory.date_created,
                 'contents': self.get_directory_contents(subdirectory)
-            })
+            }
+            serializer = DirectoryContentSerializer(data=serializer_data)
+            serializer.is_valid()
+            contents.append(serializer.data)
 
         files = File.objects.filter(directory_id=directory.id)
-        print(files)
         for file in files:
-            print(file.__dict__)
-            contents.append({
+            serializer_data = {
                 'type': 'file',
                 'name': file.name,
                 'id': file.id,
                 'user_id': file.user_id,
                 'date_created': file.date_created,
                 'size': file.size
-            })
+            }
+            serializer = DirectoryContentSerializer(data=serializer_data)
+            serializer.is_valid()
+            contents.append(serializer.data)
+
         return contents
 
-    def get(self, request, pk=None):
+    def get_queryset(self):
 
-        user = request.user
+        user = self.request.user
+        pk = self.kwargs.get('pk')
         if pk is None or '':
             print(user)
             directory = get_object_or_404(Directory, name="/", user=user, parent_directory=None)
@@ -95,6 +102,4 @@ class ListDirectoryContentsView(GenericAPIView):
         # Get the contents of the directory
         contents = self.get_directory_contents(directory)
 
-        print(contents)
-
-        return Response(data=contents, status=status.HTTP_200_OK)
+        return contents
